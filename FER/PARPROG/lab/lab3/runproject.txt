@@ -1,0 +1,4 @@
+position in: ~/Documents/FER/PARPROG/lab
+run:
+    mpic++ lab3/OpenCL_primjeri/kostur.cpp -o lab3/OpenCL_primjeri/kostur -L lab3/OpenCL/lib/ -lOpenCL -I lab3/OpenCL/include/
+    mpiexec -n 6 cpi

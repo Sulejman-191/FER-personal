@@ -1,0 +1,9 @@
+Data preparation - 100%
+Exponential smoothing - 85% - You didn't show train and test lines separately (with different colours). You should have shown the table of parameters used and the errors obtained (if it is too big, than don't test for parameters that you think will have no affect). 
+ARIMA - 95% - You didn't show train and test lines separately (with different colours). Do you manage to significantly improve the model when optimising for p, d, q?
+Facebook Prophet -  80% - Do you manage to reduce the error? What prediction does the Prophet algorithm give compared to previously tested algorithms?
+Should have shown a table of the parameters used and the errors obtained using these parameters. 
+RandomForestRegressor - 70% - You didn't display a line graph showing the training set. You were supposed to try it out with more features and/or a different transformation. Also you were supposed to explain why all the results so far have been bad. 
+Generated signal - 100%
+AVERAGE: 88.33%
+0036517743

@@ -1,0 +1,8 @@
+Data preparation - 100%
+Exponential smoothing - 50% - You didn't show default ExponentialSmoothing before optimisation. You should have used more parameters for optimisation (that's why you had constant predictions). You should have used root mean squared error but you used mean squared error. Do you manage to improve the model? 
+ARIMA - 90% - You should have used root mean squared error but you used mean squared error. What does the width of the confidence interval suggest? Do you find obtained prediction useful? Why? 
+Facebook Prophet - 90% - You should have used root mean squared error but you used mean squared error. Should have shown a table of the parameters used and the errors obtained using these parameters. 
+RandomForestRegressor - 85% - You should have used root mean squared error but you used mean squared error. Should have tried to use additional features and/or a different way of data transformation. Were you able to improve the model significantly? 
+Generated signal - 90% - You should have used root mean squared error but you used mean squared error. Again for ExponentialSmoothing you should have used some more parameters.
+AVERAGE: 84.17%
+0036517743
