@@ -1,0 +1,7 @@
+.box span:first-of-type {
+    font-size: 28px;
+}
+
+.box span:last-of-type {
+    font-size: 18px;
+}

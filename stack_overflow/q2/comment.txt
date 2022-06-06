@@ -1,0 +1,4 @@
+https://stackoverflow.com/questions/72502407/is-it-possible-to-apply-different-css-properties-to-tags-that-have-no-id-and-cla
+
+Answer: 
+
