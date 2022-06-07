@@ -1,0 +1,6 @@
+position in lab3/zad3/CFD:
+    g++ arraymalloc.cpp boundary.cpp cfd.cpp cfdio.cpp jacobi.cpp timing.h -o cfd -L ../../OpenCL/lib/ -lOpenCL -I ../../OpenCL/include
+    ./cfd 64 1000
+
+templ:
+    g++ cpp_file.cpp -o exe_file -L ../OpenCL/lib/ -lOpenCL -I ../OpenCL/include
