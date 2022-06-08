@@ -166,8 +166,8 @@ int main(int argc, char **argv)
 		Buffer B = Buffer(context, CL_MEM_WRITE_ONLY, (m + 2) * (n + 2) * sizeof(double));
 
 		// Postavi argumente jezgrenih funkcija
-		kernel.setArg(0, psitmp);
-		kernel.setArg(1, psi);
+		kernel.setArg(0, A);
+		kernel.setArg(1, B);
 		kernel.setArg(2, m);
 		kernel.setArg(3, n);
 
