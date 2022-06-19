@@ -19,10 +19,9 @@ class Ploca():
         # napravi 6*7 polje nula
         self.polje = []
         i = 0
-        while (i < 6):
+        while i < 6:
             self._dodaj_redak()
             i += 1
-
 
     """ ******** VANJSKE ***************"""
 
@@ -87,7 +86,7 @@ class Ploca():
 
         # pronadi indekse zadnje plocice (stupac vec imamo)
         i = len(self.polje) - 1
-        while (i >= 0):
+        while i >= 0:
             if self.polje[i][zadnji_potez - 1] != 0:
                 break
             i -= 1
@@ -97,26 +96,26 @@ class Ploca():
 
         # provjera vodoravno
         (lista, indeks) = self._dohvati_redak(indeksi)
-        if self._provjeri_listu(lista, indeks) == True:
-            return (True, oznaka)
+        if self._provjeri_listu(lista, indeks):
+            return True, oznaka
 
         # provjera okomito
         (lista, indeks) = self._dohvati_stupac(indeksi)
-        if self._provjeri_listu(lista, indeks) == True:
-            return (True, oznaka)
+        if self._provjeri_listu(lista, indeks):
+            return True, oznaka
 
         # provjera dijagonalno /
         (lista, indeks) = self._dohvati_lijevu_dijagonalu(indeksi)
-        if self._provjeri_listu(lista, indeks) == True:
-            return (True, oznaka)
+        if self._provjeri_listu(lista, indeks):
+            return True, oznaka
         # provjera dijagonalno \
 
         (lista, indeks) = self._dohvati_desnu_dijagonalu(indeksi)
-        if self._provjeri_listu(lista, indeks) == True:
-            return (True, oznaka)
+        if self._provjeri_listu(lista, indeks):
+            return True, oznaka
 
         # inace
-        return (False, 0)
+        return False, 0
 
     """ ********** Provjere dovrsenosti *********** """
 

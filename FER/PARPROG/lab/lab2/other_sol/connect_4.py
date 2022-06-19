@@ -10,7 +10,7 @@ rank = comm.Get_rank()
 size = comm.Get_size()
 
 OZNAKA_PODACI = 1
-OZNAKA_ZAHTJEV = 2  # inicijalni zahtjev za zadatkom
+OZNAKA_ZAHTJEV = 2
 OZNAKA_ZADATAK = 3
 OZNAKA_REZULTAT = 4
 OZNAKA_CEKAJ = 5
@@ -20,10 +20,9 @@ BROJ_RAZINA = 8
 BROJ_RAZINA_MASTER = 3
 BROJ_RAZINA_WORKER = BROJ_RAZINA - BROJ_RAZINA_MASTER
 
-print('hello %d on %s' % (rank, MPI.Get_processor_name()))
 comm.Barrier()
 
-if rank == 0:  # ako je master
+if rank == 0:  # master
 
     def _dohvati_neki_zadatak():  # funkcija koja dohvaca neki slobodan zadatak
         for k, v in zadaci.items():
@@ -42,7 +41,7 @@ if rank == 0:  # ako je master
         return kvaliteta
 
 
-    def _salji_kraj():
+    def  _salji_kraj():
         for x in range(1, size):
             poruka = {'vrsta': OZNAKA_KRAJ}
             comm.send(poruka, dest=x)
@@ -50,16 +49,15 @@ if rank == 0:  # ako je master
 
     def _ucitaj_potez_igraca():
         while True:
-            print("Stupac: ")
-            potez_igraca_input = input()
+            tekst = input("Tvoj potez (unesi stupac): ")
             try:
-                potez_igraca = int(potez_igraca_input)
-                if potez_igraca >= 0 and potez_igraca <= 7:
-                    return potez_igraca
+                stupac = int(tekst)
+                if stupac >= 0 and stupac <= 7:
+                    return stupac
                 else:
                     raise ValueError()
             except ValueError:
-                print("Neispravan unos! 1-7 za broj stupca ili 0 za kraj")
+                print("Unos mora biti između 1 i 7!")
 
 
     def _provjeri_kraj_igre_sve():
@@ -87,7 +85,7 @@ if rank == 0:  # ako je master
     ishod = _provjeri_kraj_igre_sve()
     if ishod != None:
         _salji_kraj
-        print("Pobjednik je: ", ishod)
+        print("Pobjednik: ", ishod)
         exit()
 
     # za jedan ciklus izracuna zadataka
@@ -124,10 +122,9 @@ if rank == 0:  # ako je master
             if poruka['vrsta'] == OZNAKA_ZAHTJEV:
 
                 zadatak = _dohvati_neki_zadatak()
-                # ako ima zadataka
-                if zadatak != None:  # ovo mora biti ovako, inace ima neki problem kad funckija dohvacanja zadatka neprestano vraca neki vec rijeseni zadatak
+
+                if zadatak != None:
                     zadaci[zadatak] = True
-                    # print 'zadatak (%d,%d) dodjeljen procesu %d' % (zadatak[0], zadatak[1], src)
                     odgovor = {'vrsta': OZNAKA_ZADATAK, 'zadatak': zadatak}
                     comm.send(odgovor, dest=src)
                 else:
@@ -138,39 +135,29 @@ if rank == 0:  # ako je master
                     comm.send(odgovor, dest=src)
 
             if poruka['vrsta'] == OZNAKA_REZULTAT:
-                # print 'zadatak (%d,%d) obraden od procesa %d' % (poruka['zadatak'][0], poruka['zadatak'][1], src)
                 zadaci[poruka['zadatak']] = poruka['rezultat']
 
-        # nakon sto su obavljeni svi zadaci, izracunaj kvalitetu poteza
         kvaliteta = _izracunaj_kvalitetu_poteza()
-        # dohvati najbolji stupac
         stupac = max(kvaliteta, key=lambda a: kvaliteta.get(a))
 
         t_end = time.time()
 
-        for x in range(1, 8):
-            print('Kvaliteta poteza %d je %f' % (x, kvaliteta[x]))
-        print('za najbolji potez odabran je %d' % stupac)
-        print('Potez je izracunat u', t_end - t_start, 'sekundi')
-
-        """for x in range(1,8):
-            p = []
-            for y in range(1,8):
-                p.append(zadaci[(x, y)])
-            print p"""
+        for k, v in kvaliteta.items():
+            print(f'Kvaliteta poteza {k} je {v}')
+        print(f'Stupac s najboljim ishodom: {stupac}')
+        print(f'Proteklo vrijeme: {t_end - t_start} s')
 
         ploca.odigraj_potez(Ploca.OZNAKA_CPU, stupac)
         ploca.ispisi_polje()
         ishod = _provjeri_kraj_igre(stupac)
         if ishod != None:
-            print("Pobjednik je CPU!!!")
+            print("CPU je pobjedio!")
             _salji_kraj()
             break
 
-        # trazi potez
         potez_igraca = _ucitaj_potez_igraca()
         if potez_igraca == 0:
-            print('Igrac se predao nakon sto je shvatio da je racunalo nepobjedivo')
+            print('Igra prekinuta')
             _salji_kraj()
             break
         else:
@@ -178,24 +165,30 @@ if rank == 0:  # ako je master
             ploca.ispisi_polje()
             ishod = _provjeri_kraj_igre(potez_igraca)
             if ishod != None:
-                print("Pobjednik je covjek!!!")
+                print("Ti si pobjednik!")
                 _salji_kraj()
                 break
 
-else:  # ako sam worker
+else:  # radnik
 
     def ocijeni(potezCPU, zadnjiStupac, dubina):
-        # potezCPU - je li na redu cpu
+        '''
+        
+        :param potezCPU: je li cpu na redu
+        :param zadnjiStupac: 
+        :param dubina: 
+        :return: 
+        '''
 
         provjera_kraja = ploca.provjeri_kraj(zadnjiStupac)
-        if provjera_kraja[0] == True:
+        if provjera_kraja[0]:
             if provjera_kraja[1] == Ploca.OZNAKA_CPU:
                 return 1
             else:  # provjera_kraja[1] == OZNAKA_IGRAC
                 return -1
 
         # ako igra nije gotova
-        if (dubina == 0):
+        if dubina == 0:
             return 0
 
         oznaka = Ploca.OZNAKA_CPU if potezCPU else Ploca.OZNAKA_IGRAC
@@ -203,20 +196,20 @@ else:  # ako sam worker
         ukupno = 0.0
         sva_djeca_gubici = True
         sva_djeca_pobjede = True
-        for stupac in range(1, 8):
+        for idx_stupca in range(1, 8):
 
-            # if rank == 1:
-            #    ploca.ispisi_polje()
-            #    print stupac, oznaka, dubina
+            ploca.odigraj_potez(oznaka, idx_stupca)
+            rezultat = ocijeni(not potezCPU, idx_stupca, dubina - 1)
+            ploca.ponisti_potez(idx_stupca)
 
-            ploca.odigraj_potez(oznaka, stupac)
-            rezultat = ocijeni(not potezCPU, stupac, dubina - 1)
-            ploca.ponisti_potez(stupac)
-
-            if rezultat > -1: sva_djeca_gubici = False
-            if rezultat != 1: sva_djeca_pobjede = False
-            if rezultat == 1 and potezCPU == False: return 1  # ako je pobjeda otkrivena prije poteza igraca
-            if rezultat == -1 and potezCPU == True: return -1
+            if rezultat > -1:
+                sva_djeca_gubici = False
+            if rezultat != 1:
+                sva_djeca_pobjede = False
+            if rezultat == 1 and potezCPU == False:
+                return 1  # ako je pobjeda otkrivena prije poteza igraca
+            if rezultat == -1 and potezCPU == True:
+                return -1
             ukupno += rezultat
 
         if sva_djeca_pobjede: return 1
@@ -228,21 +221,16 @@ else:  # ako sam worker
 
         poruka = comm.recv(source=0)
 
-        # ako si primio oznaku kraja rada, igra je gotova
         if poruka['vrsta'] == OZNAKA_KRAJ:
-            # print '%d zavrsava s radom' % rank
             time.sleep(1)
             break
 
-        # ako si primio podatke, znaci krece novi ciklus racunanja poteza
+        # novi ciklus racunanja poteza
         if poruka['vrsta'] == OZNAKA_PODACI:
-            # print '%d podaci primljeni' % rank
             ploca = poruka['ploca']
 
-        # pa krenimo racunati
         gotovo = False
         while True:
-            # Trazi zadatak
             zahtjev = {'vrsta': OZNAKA_ZAHTJEV}
             comm.send(zahtjev, dest=0)
 
@@ -251,7 +239,6 @@ else:  # ako sam worker
             if odgovor['vrsta'] == OZNAKA_CEKAJ:
                 break
 
-            # else if odgovor['vrsta'] == OZNAKA_ZADATAK:
             # zadatak je definiran ntorkom(potez racunala, potez igraca)
             zadatak = odgovor['zadatak']
 

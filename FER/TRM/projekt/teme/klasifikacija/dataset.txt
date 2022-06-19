@@ -1,0 +1,7 @@
+Sa linka dolje odaberite jedan dataset za problem klasifikacije koji vam se èini najviše interesantan.
+
+https://archive.ics.uci.edu/ml/datasets.php?format=&task=cla&att=&area=&numAtt=greater100&numIns=&type=&sort=nameUp&view=list
+
+Kada odaberete dataset slobodno dajte prijedlog kako biste proveli klasifikaciju ili ako nemate ideju o koraku dalje konzultirajte me.
+
+ 
